@@ -17,6 +17,7 @@ pyplot = "*"
 matplotlib = "*"
 opencv = "*"
 opencv-python = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.5"
