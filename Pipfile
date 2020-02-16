@@ -16,6 +16,8 @@ mtcnn = "*"
 opencv-python = "*"
 scikit-learn = "*"
 matplotlib = "*"
+tqdm = "*"
+ipywidgets = "*"
 
 [requires]
 python_version = "3.6"

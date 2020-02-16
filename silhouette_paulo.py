@@ -3,6 +3,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn.metrics.cluster import homogeneity_score
+from tqdm.notebook import tqdm
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -11,8 +12,10 @@ import numpy as np
 
 def analyze(X, range_n_clusters, show_individual_graphs = True):
     x_plot = []
-    y_plot = []
-    for n_clusters in range_n_clusters:
+    silhuette_plot = []
+    sse_plot = []
+    print(f'Computing clusters from {min(range_n_clusters)} to {max(range_n_clusters)}')
+    for n_clusters in tqdm(range_n_clusters):
         
         # Initialize the clusterer with n_clusters value and a random generator
         # seed of 10 for reproducibility.
@@ -23,13 +26,13 @@ def analyze(X, range_n_clusters, show_individual_graphs = True):
         # This gives a perspective into the density and separation of the formed
         # clusters
         silhouette_avg = silhouette_score(X, cluster_labels)
+        sse_plot.append(clusterer.inertia_)
+
         #homo_score = homogeneity_score(true_labels, cluster_labels)
 
-        print("For n_clusters =", n_clusters,
-              "The average silhouette_score is :", silhouette_avg)
-        
+        #print(f"Clusters ={n_clusters} Silhouette: {silhouette_avg} SSE: {clusterer.inertia_}")
         x_plot.append(n_clusters)
-        y_plot.append(silhouette_avg)
+        silhuette_plot.append(silhouette_avg)
         
         if(show_individual_graphs):        
             # Create a subplot with 1 row and 2 columns
@@ -88,7 +91,10 @@ def analyze(X, range_n_clusters, show_individual_graphs = True):
     fig, ax1 = plt.subplots(1)
     ax1.set_title(("Silhouette score for each cluster number"),fontsize=16, fontweight='bold')
     fig.set_size_inches(18, 7)
-    ax1.plot(x_plot , y_plot)
+    silhuette_plot = silhuette_plot/max(silhuette_plot)
+    ax1.plot(x_plot , silhuette_plot)
+    sse_plot = sse_plot/max(sse_plot)
+    ax1.plot(x_plot , sse_plot)
     ax1.set_xticks([i+1 for i in range(max(range_n_clusters))])
 
     plt.grid(b=True, which='major', color='#666666', linestyle='-')
