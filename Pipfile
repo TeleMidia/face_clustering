@@ -13,11 +13,9 @@ pandas = "*"
 keras-vggface = {git = "https://github.com/rcmalli/keras-vggface.git"}
 tensorflow = "*"
 mtcnn = "*"
-pyplot = "*"
-matplotlib = "*"
-opencv = "*"
 opencv-python = "*"
 scikit-learn = "*"
+matplotlib = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "3.6"
