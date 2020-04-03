@@ -102,3 +102,4 @@ def analyze(X, range_n_clusters, show_individual_graphs = True):
     plt.minorticks_on()
     plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
     plt.show()
+    return sihuetter_plot

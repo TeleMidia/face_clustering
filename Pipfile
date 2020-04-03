@@ -11,13 +11,15 @@ jupyterlab = "*"
 numpy = "*"
 pandas = "*"
 keras-vggface = {git = "https://github.com/rcmalli/keras-vggface.git"}
-tensorflow = "*"
 mtcnn = "*"
 opencv-python = "*"
 scikit-learn = "*"
 matplotlib = "*"
 tqdm = "*"
 ipywidgets = "*"
+jupyter = "*"
+tensorflow-gpu = "*"
+tensorflow = "*"
 
 [requires]
 python_version = "3.6"
