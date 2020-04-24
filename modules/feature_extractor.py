@@ -9,10 +9,15 @@ from keras_vggface.vggface import VGGFace
 class FeatureExtractor():
 	"""docstring for FeatureExtractor"""
 	#backbone=['vgg16', 'resnet', 'senet50']
-	def __init__(self, backbone='senet50'):
+	def __init__(self, backbone):
 		self.backbone = backbone
 		self.detector = MTCNN()
 		self.model = VGGFace(model=self.backbone, include_top=False, input_shape=(224, 224, 3), pooling='avg')
+
+		if self.backbone == 'senet50' or self.backbone=='resnet50':			
+			self.features_shape = 2048
+		else:
+			self.features_shape = 512
 		
 	def extract(self, urls):
 		self.df_imgs = pd.DataFrame(urls, columns=['urls'])
@@ -22,7 +27,6 @@ class FeatureExtractor():
 		return self.df_imgs
 
 	def extract_face(self, filename, required_size=(224, 224)):
-		print(filename)
 		pixels = cv2.imread(filename)
 		if pixels is not None:
 			pixels_rgb = cv2.cvtColor(pixels, cv2.COLOR_BGR2RGB)
@@ -38,7 +42,7 @@ class FeatureExtractor():
 				if face.shape[0]>0 and face.shape[1]>0:
 					return cv2.resize(face, required_size)
 
-		return np.zeros(2048)
+		return np.zeros(self.features_shape)
 
 	def get_embeddings(self, filename):
 		face = self.extract_face(filename)
