@@ -20,8 +20,6 @@ ipywidgets = "*"
 jupyter = "*"
 tensorflow-gpu = "*"
 tensorflow = "*"
-scikit-learn-extra = "*"
-9f5a0c3 = {file = "https://github.com/scikit-learn-contrib/scikit-learn-extra/archive/master.zip"}
 
 [requires]
 python_version = "3.6"
