@@ -26,7 +26,7 @@ class Clusterer():
 		self.scaler = MinMaxScaler()
 
 		self.models = {'kmeans': lambda n_clusters: KMeans(n_clusters= n_clusters, verbose = 0, random_state=RANDOM_SEED), 
-						'gmm' : lambda n_clusters: GaussianMixture(n_components = n_clusters),
+						'gmm' : lambda n_clusters: GaussianMixture(n_components = n_clusters, random_state=RANDOM_SEED),
 						'affinity': lambda n_clusters: AffinityPropagation(),
 						'agglomerative': lambda n_clusters: AgglomerativeClustering(n_clusters=n_clusters)}
 
