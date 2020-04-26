@@ -6,7 +6,7 @@ Author: Paulo Renato Conceição Mendes
 
 You can use pip to install.
 ```
-pip install https://github.com/TeleMidia/face_clustering/releases/download/0.0.1/face_clustering.whl
+pip install https://github.com/TeleMidia/face_clustering/releases/download/0.0.1/face_clustering-0.0.1-py3-none-any.whl
 ```
 
 ## Usage:
