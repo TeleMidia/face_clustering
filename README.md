@@ -28,9 +28,15 @@ clusters = Clusterer(n_clusters=4, urls=complete_urls).clusterize()
 ```
 'senet50'(default), 'resnet50', 'vgg16'
 ```
+```
+clusters = Clusterer(n_clusters=4, urls=complete_urls, backbone='resnet50').clusterize()
+```
 - *algs*: list that specify which clustering algorithms you want to use. By default, all of them are used:
 ```
 ['kmeans', 'gmm', 'affinity', 'agglomerative']
+```
+```
+clusters = Clusterer(n_clusters=4, urls=complete_urls, algs=['kmeans', 'gmm']).clusterize()
 ```
   - *kmeans* refers to sklearn kmeans
   - *gmm* refers to sklearn Gaussian Mixture Model
