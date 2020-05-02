@@ -10,30 +10,37 @@ from sklearn.preprocessing import MinMaxScaler
 
 RANDOM_SEED = 42
 
-class Clusterer():
-	"""docstring for Clusterer"""
 
-	def __init__(self, urls = None, face_embeddings = None, algs=['kmeans', 'gmm', 'affinity', 'agglomerative'], backbone='senet50', n_clusters=2):
-		self.algs = algs
-		self.n_clusters = n_clusters
-		self.urls = urls
+class Clusterer:
+    """docstring for Clusterer"""
 
-		if face_embeddings is None:
-			extractor = FeatureExtractor(backbone)
-			self.face_embeddings = extractor.extract(self.urls)
-		else:
-			self.face_embeddings = face_embeddings
-		self.scaler = MinMaxScaler()
+    def __init__(self, urls=None, face_embeddings=None, algs=['kmeans', 'gmm', 'affinity', 'agglomerative'],
+                 backbone='senet50', n_clusters=2):
+        self.algs = algs
+        self.n_clusters = n_clusters
+        self.urls = urls
 
-		self.models = {'kmeans': lambda n_clusters: KMeans(n_clusters= n_clusters, verbose = 0, random_state=RANDOM_SEED), 
-						'gmm' : lambda n_clusters: GaussianMixture(n_components = n_clusters, random_state=RANDOM_SEED),
-						'affinity': lambda n_clusters: AffinityPropagation(),
-						'agglomerative': lambda n_clusters: AgglomerativeClustering(n_clusters=n_clusters)}
+        if face_embeddings is None:
+            extractor = FeatureExtractor(backbone)
+            self.face_embeddings = extractor.extract(self.urls)
+        else:
+            self.face_embeddings = face_embeddings.copy()
+        valid_indexes = self.face_embeddings.embeddings.apply(lambda x: str(x) != '-')
+        self.face_embeddings = self.face_embeddings.loc[valid_indexes]
 
-	def clusterize(self):
-		features = pd.DataFrame(self.face_embeddings['embeddings'].values.tolist(), index = self.face_embeddings.index)
-		features_scaled = self.scaler.fit_transform(features)
+        self.scaler = MinMaxScaler()
 
-		for alg in self.algs:
-			self.face_embeddings['cluster_'+alg] = self.models[alg](n_clusters = self.n_clusters).fit_predict(features_scaled)
-		return self.face_embeddings
+        self.models = {'kmeans': lambda n_clusters: KMeans(n_clusters=n_clusters, verbose=0, random_state=RANDOM_SEED),
+                       'gmm': lambda n_clusters: GaussianMixture(n_components=n_clusters, random_state=RANDOM_SEED),
+                       'affinity': lambda n_clusters: AffinityPropagation(),
+                       'agglomerative': lambda n_clusters: AgglomerativeClustering(n_clusters=n_clusters)}
+
+    def clusterize(self):
+        features = pd.DataFrame(self.face_embeddings['embeddings'].values.tolist(), index=self.face_embeddings.index)
+        features_scaled = self.scaler.fit_transform(features)
+        models_inst = {}
+        for alg in self.algs:
+            id = 'cluster_' + alg
+            models_inst[id] = self.models[alg](n_clusters=self.n_clusters)
+            self.face_embeddings[id] = models_inst[id].fit_predict(features_scaled)
+        return self.face_embeddings, models_inst
