@@ -17,39 +17,45 @@ class FeatureExtractor:
         self.model = VGGFace(model=self.backbone, include_top=False, input_shape=(224, 224, 3), pooling='avg')
 
     def extract(self, urls):
+        """
+        urls: urls of the images
+        returns one face embedding per url
+        """
         self.df_imgs = pd.DataFrame(urls, columns=['urls'])
-        embeddings = self.df_imgs.urls.apply(lambda x: self.get_embeddings(x))
+        embeddings = self.df_imgs.urls.apply(lambda x: self.get_embeddings(x)[0][0])
         self.df_imgs['embeddings'] = embeddings
 
         return self.df_imgs
 
-    def extract_face(self, filename, required_size=(224, 224)):
+    def extract_faces(self, filename, required_size=(224, 224), confidence=0.9):
         pixels = cv2.imread(filename)
         if pixels is not None:
             pixels_rgb = cv2.cvtColor(pixels, cv2.COLOR_BGR2RGB)
 
             results = self.detector.detect_faces(pixels_rgb)
 
-            if len(results) > 0:
+            faces = []
+            for result in results:
+                if result['confidence'] >= confidence:
+                    x1, y1, width, height = result['box']
+                    x2, y2 = x1 + width, y1 + height
+                    face = pixels_rgb[y1:y2, x1:x2]
 
-                x1, y1, width, height = results[0]['box']
-                x2, y2 = x1 + width, y1 + height
-                face = pixels_rgb[y1:y2, x1:x2]
-
-                if face.shape[0] > 0 and face.shape[1] > 0:
-                    return cv2.resize(face, required_size)
-
+                    if face.shape[0] > 0 and face.shape[1] > 0:
+                        faces.append(cv2.resize(face, required_size))
+            if len(faces) > 0:
+                return faces
         return 'no_face'
 
     def get_embeddings(self, filename):
-        face = self.extract_face(filename)
-        if str(face) != 'no_face':
+        faces = self.extract_faces(filename)
+        if str(faces) != 'no_face':
             # print('face')
-            sample = np.asarray(face, 'float32')
-            sample = np.expand_dims(sample, axis=0)
+            sample = np.asarray(faces, 'float32')
+            # sample = np.expand_dims(sample, axis=0)
             sample = preprocess_input(sample, version=2)
             embedding = self.model.predict(sample)
-            return embedding[0]
+            return embedding, faces
         else:
             # print(face)
-            return '-'
+            return ['-']*2
