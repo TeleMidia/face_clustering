@@ -36,6 +36,7 @@ class FaceSearcher:
 
     def closest_centroids(self, filename):
         embs_query, faces_query = self.extractor.get_embeddings(filename)
+        assert str(embs_query) != '-', 'no face detected'
         embs_query_scaled = self.scaler.transform(embs_query)
 
         ans = []
@@ -47,6 +48,7 @@ class FaceSearcher:
 
     def closest_faces(self, filename):
         embs_query, faces_query = self.extractor.get_embeddings(filename)
+        assert str(embs_query) != '-', 'no face detected'
         embs_query_scaled = self.scaler.transform(embs_query)
 
         ans = []
