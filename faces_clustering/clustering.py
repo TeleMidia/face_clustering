@@ -35,9 +35,12 @@ class Clusterer:
                        'affinity': lambda n_clusters: AffinityPropagation(),
                        'agglomerative': lambda n_clusters: AgglomerativeClustering(n_clusters=n_clusters)}
 
-    def clusterize(self):
+    def clusterize(self, normalize=True):
         features = pd.DataFrame(self.face_embeddings['embeddings'].values.tolist(), index=self.face_embeddings.index)
-        features_scaled = self.scaler.fit_transform(features)
+        if normalize:
+            features_scaled = self.scaler.fit_transform(features)
+        else:
+            features_scaled = features
         models_inst = {}
         for alg in self.algs:
             id = 'cluster_' + alg

@@ -31,11 +31,13 @@ class FaceSearcher:
             diff = self.cluster_embeddings.loc[self.cluster_embeddings[self.classes_col] == i].iloc[:, :-1].sub(
                 self.centroids.iloc[i, :])
             diffs.append(diff.pow(2).mean(axis=1).pow(1 / 2))
-        self.face_embs['distance'] = pd.concat(diffs)
-        self.distance_col = 'distance'
+        self.distance_col = 'd_'+self.classes_col
+        self.face_embs[self.distance_col] = pd.concat(diffs)
 
-    def closest_centroids(self, filename):
-        embs_query, faces_query = self.extractor.get_embeddings(filename)
+    def closest_centroids(self, filename = None, embs_query = None):
+        faces_query = None
+        if embs_query is None:
+            embs_query, faces_query = self.extractor.get_embeddings(filename)
         assert str(embs_query) != '-', 'no face detected'
         embs_query_scaled = self.scaler.transform(embs_query)
 
