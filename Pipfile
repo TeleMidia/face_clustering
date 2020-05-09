@@ -15,11 +15,11 @@ mtcnn = "*"
 opencv-python = "*"
 scikit-learn = "*"
 matplotlib = "*"
-tqdm = "*"
 ipywidgets = "*"
 jupyter = "*"
 tensorflow-gpu = "*"
 tensorflow = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.6"
