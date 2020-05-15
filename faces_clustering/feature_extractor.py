@@ -39,6 +39,8 @@ class FeatureExtractor:
                 if result['confidence'] >= confidence:
                     x1, y1, width, height = result['box']
                     x2, y2 = x1 + width, y1 + height
+                    x1 = max(x1,0)
+                    y1 = max(y1,0)
                     face = pixels_rgb[y1:y2, x1:x2]
 
                     if face.shape[0] > 0 and face.shape[1] > 0:
