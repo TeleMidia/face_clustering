@@ -22,8 +22,8 @@ class FaceSearcher:
         self.centroids = self.cluster_embeddings.groupby([classes_col]).mean()
         self.classes = self.face_embs[classes_col].unique()
 
-        if distance_col is None:
-            self.calculate_distance()
+        #if distance_col is None:
+        #    self.calculate_distance()
 
     def calculate_distance(self):
         diffs = []
