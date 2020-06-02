@@ -35,6 +35,7 @@ class FeatureExtractor:
             results = self.detector.detect_faces(pixels_rgb)
 
             faces = []
+            bounds = []
             for result in results:
                 if result['confidence'] >= confidence:
                     x1, y1, width, height = result['box']
@@ -45,19 +46,20 @@ class FeatureExtractor:
 
                     if face.shape[0] > 0 and face.shape[1] > 0:
                         faces.append(cv2.resize(face, required_size))
+                        bounds.append((x1,x2,y1,y2))
             if len(faces) > 0:
-                return faces
-        return 'no_face'
+                return faces, bounds
+        return ('no_face','no_face')
 
     def get_embeddings(self, filename):
-        faces = self.extract_faces(filename)
+        faces, bounds = self.extract_faces(filename)
         if str(faces) != 'no_face':
             # print('face')
             sample = np.asarray(faces, 'float32')
             # sample = np.expand_dims(sample, axis=0)
             sample = preprocess_input(sample, version=2)
             embedding = self.model.predict(sample)
-            return embedding, faces
+            return embedding, faces, bounds
         else:
             # print(face)
-            return ['-']*2
+            return ['-']*3
