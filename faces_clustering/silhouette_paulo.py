@@ -35,6 +35,7 @@ def silhuoette(X, alg = "kmeans", max_dec = 5):
     plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
 
     hl, = plt.plot([], [])
+    best_labels = []
 
     while num_dec <= max_dec:
         n_clusters+=1
@@ -51,9 +52,12 @@ def silhuoette(X, alg = "kmeans", max_dec = 5):
         if silhouette_avg < max_silhouette:
             num_dec += 1
         else:
+            best_labels = cluster_labels
             max_silhouette = silhouette_avg
             num_dec = 0
-               
+    
+    if max_silhouette < 0.2:
+        best_labels = [0]*len(X)   
 
     #silhuette_plot = silhuette_plot/max(silhuette_plot)
     ax1.plot(x_plot , silhuette_plot, label='silhuoette')
@@ -65,4 +69,6 @@ def silhuoette(X, alg = "kmeans", max_dec = 5):
     ax1.set_ylabel("Silhouette score")
     plt.show()
 
-    return x_plot[np.argmax(silhuette_plot)]
+    print(f"Best cluster number is {len(set(best_labels))}")
+
+    return best_labels
