@@ -11,7 +11,7 @@ import matplotlib.cm as cm
 import numpy as np
 
 
-def silhouette(X, alg = "kmeans", max_dec = 5, verbose = 0):
+def silhouette(X, alg = "kmeans", max_dec = 5, verbose = 0,  thresh = 0):
 
     assert alg in ['agglomerative', 'kmeans'], "alg must be kmeans or agglomerative"
 
@@ -40,8 +40,9 @@ def silhouette(X, alg = "kmeans", max_dec = 5, verbose = 0):
 
     best_labels = []
 
-    while num_dec <= max_dec:
+    while num_dec <= max_dec and n_clusters < len(X)-1:
         n_clusters+=1
+        #print(n_clusters)
         if alg == 'agglomerative':
             clusterer = AgglomerativeClustering(n_clusters=n_clusters)
         elif alg == 'kmeans':
@@ -52,12 +53,13 @@ def silhouette(X, alg = "kmeans", max_dec = 5, verbose = 0):
         x_plot.append(n_clusters)
         silhuette_plot.append(silhouette_avg)        
 
-        if silhouette_avg < max_silhouette:
+        if silhouette_avg < max_silhouette-thresh:
             num_dec += 1
         else:
             best_labels = cluster_labels
-            max_silhouette = silhouette_avg
             num_dec = 0
+            if silhouette_avg > max_silhouette:
+                max_silhouette = silhouette_avg
     
     if max_silhouette < 0.2:
         best_labels = [0]*len(X)   
