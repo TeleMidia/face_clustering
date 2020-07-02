@@ -29,7 +29,7 @@ def silhuoette(X, alg = "kmeans", max_dec = 5):
 
     fig, ax1 = plt.subplots(1)
     ax1.set_title(("Silhouette score for each cluster number"),fontsize=16, fontweight='bold')
-    fig.set_size_inches(10, 7)
+    fig.set_size_inches(10, 3)
     plt.grid(b=True, which='major', color='#666666', linestyle='-')
     plt.minorticks_on()
     plt.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)

@@ -147,6 +147,7 @@ class VideoClustering:
 			i = i + 1
 
 	def generate_cluster_by_frames(self):
+		self.colors = None
 		self.dt_embs['frames'] = self.dt_embs.urls.apply(lambda x: int(x.split('.')[0].split('/')[-1].split('_')[-1]))
 		frames = [int(x.split('.')[0].split('/')[-1].split('_')[-1]) for x in self.frames_url]
 		clusters_frames = self.dt_embs[[self.cluster_column, 'bounds', 'frames']].copy()
@@ -164,6 +165,9 @@ class VideoClustering:
 		return cluster_by_frames
 
 	def extract_frames(self, video_path, fps=None, dir_path = None):
+		if dir_path is None:
+			dir_path = video_path.split('.')[0]
+
 		self.dir_path = dir_path
 		self.video_path = video_path
 		cap=cv2.VideoCapture(video_path)
@@ -173,10 +177,7 @@ class VideoClustering:
 		if fps is None:
 			fps = original_fps
 		else:
-			fps = original_fps/fps
-
-		if dir_path is None:
-			dir_path = video_path.split('.')[0]
+			fps = original_fps/fps		
 
 		if os.path.isdir(dir_path):
 			print('Frames already extracted.')
