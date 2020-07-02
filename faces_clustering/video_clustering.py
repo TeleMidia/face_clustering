@@ -20,6 +20,8 @@ class VideoClustering:
 		self.extractor = FeatureExtractor(backbone)
 
 	def cluster(self, video_path, fps=None, dir_path = None):
+		assert os.path.isfile(video_path), 'video not found'
+
 		#extracting the frames of the video
 		print('extracting frames')
 		dir_path = self.extract_frames(video_path, fps, dir_path)
@@ -42,11 +44,28 @@ class VideoClustering:
 		self.dt_embs = dt_embs
 		self.faces_samples = self.dt_embs[[self.cluster_column,'faces']].sort_values(
 			self.cluster_column).groupby(self.cluster_column).head(1).faces.values
-		self.dir_path = dir_path
+		
 		self.cluster_by_frames = self.generate_cluster_by_frames()
+		self.video_metadata = self.generate_video_metadata()
 
-		return dt_embs
+		return self.dt_embs
 
+	def generate_video_metadata(self):
+
+		cluster_embeddings = pd.DataFrame(self.dt_embs['embeddings'].values.tolist(),index=self.dt_embs.index)
+		cluster_embeddings[self.cluster_column] = self.dt_embs[self.cluster_column]
+		metadata = pd.DataFrame(cluster_embeddings.groupby(
+			[self.cluster_column]).mean().sort_index().agg(list, axis=1))
+
+		metadata.columns = ['embeddings']
+		metadata['frames'] = self.dt_embs.groupby(self.cluster_column)['frames'].apply(list)
+		metadata['total_frames'] = self.cluster_by_frames.shape[0]
+		metadata['faces_samples'] = self.faces_samples
+		metadata['video'] = self.video_path
+
+		return metadata
+
+		
 
 	def show_people_video(self, colors = None):
 		if colors is not None:
@@ -128,9 +147,9 @@ class VideoClustering:
 			i = i + 1
 
 	def generate_cluster_by_frames(self):
+		self.dt_embs['frames'] = self.dt_embs.urls.apply(lambda x: int(x.split('.')[0].split('/')[-1].split('_')[-1]))
 		frames = [int(x.split('.')[0].split('/')[-1].split('_')[-1]) for x in self.frames_url]
-		clusters_frames = self.dt_embs[[self.cluster_column, 'bounds']].copy()
-		clusters_frames['frames'] = self.dt_embs.urls.apply(lambda x: int(x.split('.')[0].split('/')[-1].split('_')[-1]))
+		clusters_frames = self.dt_embs[[self.cluster_column, 'bounds', 'frames']].copy()
 
 		cluster_by_frames = clusters_frames.groupby('frames')[self.cluster_column].apply(list)
 		bounds_by_frames = clusters_frames.groupby('frames')['bounds'].apply(list)
@@ -145,6 +164,8 @@ class VideoClustering:
 		return cluster_by_frames
 
 	def extract_frames(self, video_path, fps=None, dir_path = None):
+		self.dir_path = dir_path
+		self.video_path = video_path
 		cap=cv2.VideoCapture(video_path)
 		original_fps = int(round(cap.get(cv2.CAP_PROP_FPS)))
 

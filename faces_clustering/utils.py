@@ -27,7 +27,7 @@ def generate_colors(n):
     steph = 180 / n
     for _ in range(n):        
         aux = np.uint8(np.array([h,s,v]).reshape((1,1,3)))
-        print(aux)
+        #print(aux)
         color = cv2.cvtColor(aux, cv2.COLOR_HSV2RGB).reshape(3).astype(float)
         color_values.append(color)
         h += steph
