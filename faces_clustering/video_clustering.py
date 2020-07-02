@@ -79,7 +79,7 @@ class VideoClustering:
 		[axi.set_axis_off() for axi in axes.ravel()]
 		for sample in self.faces_samples:
 			#axes.figure(figsize=(2,3))
-			image = cv2.rectangle(sample, (0,0), sample.shape[0:2], self.colors[i], int(sample.shape[0]/10))
+			image = cv2.rectangle(sample.copy(), (0,0), sample.shape[0:2], self.colors[i], int(sample.shape[0]/10))
 
 			axes[i].set_title(f'Person {i}')
 			axes[i].imshow(image)
