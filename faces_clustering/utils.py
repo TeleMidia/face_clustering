@@ -7,6 +7,8 @@ import numpy as np
 def is_image(file):
     return file.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))
 
+def is_video(file):
+    return file.lower().endswith(('.mp4', '.avi'))    
 
 def get_files_folder(folder, criteria=lambda x: True):
     complete_urls = []

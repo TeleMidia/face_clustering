@@ -4,14 +4,15 @@ import pandas as pd
 import numpy as np
 from faces_clustering import get_files_folder, FeatureExtractor, is_image
 from tqdm.notebook import tqdm
-from faces_clustering import silhuoette, generate_colors
+from faces_clustering import silhouette, generate_colors
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import shutil
 
 class VideoClustering:
 
-	def __init__(self, backbone, clustering_alg):
+	def __init__(self, backbone, clustering_alg, verbose = 0):
+		self.verbose = verbose
 		self.colors = None
 		self.dir_path = None
 		self.backbone = backbone
@@ -22,12 +23,16 @@ class VideoClustering:
 	def cluster(self, video_path, fps=None, dir_path = None):
 		assert os.path.isfile(video_path), 'video not found'
 
+		if self.verbose > 0:
+			print(f'Processing {video_path}')
 		#extracting the frames of the video
-		print('extracting frames')
+		if self.verbose > 1:
+			print('extracting frames')
 		dir_path = self.extract_frames(video_path, fps, dir_path)
 		
 		#extracting the faces, bounding boxes and embeddings
-		print('extracting embeddings')
+		if self.verbose > 1:
+			print('extracting embeddings')
 		dt_embs = self.extract_face_embeddings(dir_path)
 		
 		#only valid embeddings
@@ -37,8 +42,9 @@ class VideoClustering:
 		embs = [list(emb) for emb in dt_embs.embeddings.values]
 
 		#clustering
-		print('clustering')
-		label_clusters = silhuoette(embs,alg = self.clustering_alg)
+		if self.verbose > 1:
+			print('clustering')
+		label_clusters = silhouette(embs,alg = self.clustering_alg, verbose = self.verbose)
 		dt_embs[self.cluster_column] = label_clusters
 
 		self.dt_embs = dt_embs
@@ -180,7 +186,8 @@ class VideoClustering:
 			fps = original_fps/fps		
 
 		if os.path.isdir(dir_path):
-			print('Frames already extracted.')
+			if self.verbose > 1:
+				print('Frames already extracted.')
 			 #shutil.rmtree(dir_path)
 		else:
 			os.mkdir(dir_path)
@@ -198,8 +205,12 @@ class VideoClustering:
 		frames_url = get_files_folder(dir_path, is_image)
 		self.frames_url = frames_url
 		faces_dict = {}
-		for url in tqdm(frames_url):
-			faces_dict[url] = self.extractor.get_embeddings(url)
+		if self.verbose > 0:
+			for url in tqdm(frames_url):
+				faces_dict[url] = self.extractor.get_embeddings(url)
+		else:
+			for url in frames_url:
+				faces_dict[url] = self.extractor.get_embeddings(url)
 
 		all_urls = []
 		all_faces = []
