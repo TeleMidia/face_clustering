@@ -1,6 +1,7 @@
 faces_embeddings.pkl
 .ipynb_checkpoints/
 *.lock
+*.pkl
 /data
 .idea
 
