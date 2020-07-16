@@ -7,19 +7,18 @@ verify_ssl = true
 
 [packages]
 ipykernel = "*"
-jupyterlab = "*"
 numpy = "*"
 pandas = "*"
-keras-vggface = {git = "https://github.com/rcmalli/keras-vggface.git"}
 mtcnn = "*"
 opencv-python = "*"
 scikit-learn = "*"
 matplotlib = "*"
 ipywidgets = "*"
-jupyter = "*"
-tensorflow-gpu = "*"
-tensorflow = "*"
+jupyterlab = "*"
 tqdm = "*"
+keras-vggface = {git = "https://github.com/rcmalli/keras-vggface.git"}
+tensorflow = "==2.2.0"
+keras = "==2.3.1"
 
 [requires]
 python_version = "3.6"
