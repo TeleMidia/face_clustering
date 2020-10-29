@@ -13,7 +13,7 @@ certifi=2020.6.20=py38_0
 cffi=1.14.0=py38h7a1dbc1_0
 chardet=3.0.4=py38_1003
 colorama=0.4.3=py_0
-cryptography=2.9.2=py38h7a1dbc1_0
+cryptography=3.2
 cycler=0.10.0=pypi_0
 decorator=4.4.2=py_0
 defusedxml=0.6.0=py_0
